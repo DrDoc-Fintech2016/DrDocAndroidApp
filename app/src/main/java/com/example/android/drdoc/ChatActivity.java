@@ -45,6 +45,7 @@ public class ChatActivity extends Activity {
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    SendWebsocketMessage("send", chatText.getText().toString());
                     return sendChatMessage(true, chatText.getText().toString());
                 }
                 return false;
@@ -53,6 +54,7 @@ public class ChatActivity extends Activity {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                SendWebsocketMessage("send", chatText.getText().toString());
                 sendChatMessage(true, chatText.getText().toString());
             }
         });
@@ -117,6 +119,22 @@ public class ChatActivity extends Activity {
         // for some reason this work in debug mode only
         //mWebSocketClient.connect();
 
+    }
+
+    private void SendWebsocketMessage(String key, String value) {
+        if ((!mWebSocketClient.isConnected()) || !mWebSocketIsOpen) return;
+
+        try
+        {
+            JSONObject jasonData = new JSONObject();
+            jasonData.put("cmd", key);
+            jasonData.put("data", value);
+            mWebSocketClient.sendTextMessage(jasonData.toString());
+        }
+        catch(JSONException e)
+        {
+            //some exception handler code.
+        }
     }
 
     private boolean sendChatMessage(boolean userTalks, String text) {
