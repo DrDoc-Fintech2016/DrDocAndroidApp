@@ -77,7 +77,7 @@ public class ChatActivity extends Activity {
         //mConnectTrySkip = 3;
         mWebSocketClient = new WebSocketConnection();
         try {
-            mWebSocketClient.connect("ws://130.211.184.58:8002", new WebSocketHandler() {
+            mWebSocketClient.connect("ws://130.211.184.58:8000", new WebSocketHandler() {
                 @Override
                 public void onOpen() {
                     Log.d("WEBSOCKETS", "Connected to server!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -94,11 +94,9 @@ public class ChatActivity extends Activity {
                         String data = reader.getString("data");
 
                         Log.i("WEBSOCKETS", data);
-                        /*if (cmd.equalsIgnoreCase("camera")) {
-                            if (data.equalsIgnoreCase("capture")) {
-                                Log.i("WEBSOCKETS", "wow");
-                            }
-                        }*/
+                        if (cmd.equalsIgnoreCase("nav")) {
+                            sendChatMessage(false, data);
+                        }
 
                     } catch (JSONException e) {
 
