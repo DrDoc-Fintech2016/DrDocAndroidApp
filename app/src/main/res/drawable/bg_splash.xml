@@ -3,9 +3,9 @@
     <item
         android:drawable="@color/colorPrimary"/>
 
-    <!--<item>-->
-        <!--<bitmap-->
-            <!--android:gravity="center"-->
-            <!--android:src="@drawable/ic_in_app_logo_big"/>-->
-    <!--</item>-->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/drdoc_logo"/>
+    </item>
 </layer-list>
