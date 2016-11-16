@@ -35,6 +35,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -57,6 +62,12 @@ public class MainActivity extends Activity {
     Bitmap photo;
     String ba1;
     public static String URL = "Paste your URL here";
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,20 +89,24 @@ public class MainActivity extends Activity {
                 upload();
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void upload() {
         // Image location URL
-        Log.e("path", "----------------" + picturePath);
+        Log.i("path", "----------------" + picturePath);
 
         // Image
-        Bitmap bm = BitmapFactory.decodeFile(picturePath);
+        //Bitmap bm = BitmapFactory.decodeFile(picturePath);
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+        //bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+        photo.compress(Bitmap.CompressFormat.JPEG, 90, bao);
         byte[] ba = bao.toByteArray();
         ba1 = Base64.encodeToString(ba, Base64.NO_WRAP);
 
-        Log.e("base64", "-----" + ba1);
+        Log.i("base64", "-----" + ba1);
 
         // Upload image to server
         new uploadToServer().execute();
@@ -131,15 +146,53 @@ public class MainActivity extends Activity {
             picturePath = cursor.getString(columnIndex);
             cursor.close();*/
 
+
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
             imageView.setImageBitmap(photo);
         }
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
+
     public class uploadToServer extends AsyncTask<Void, Void, String> {
 
         private ProgressDialog pd = new ProgressDialog(MainActivity.this);
+
         protected void onPreExecute() {
             super.onPreExecute();
             pd.setMessage("Wait image uploading!");
@@ -150,15 +203,20 @@ public class MainActivity extends Activity {
         protected String doInBackground(Void... params) {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("base64", ba1));
-            nameValuePairs.add(new BasicNameValuePair("ImageName", System.currentTimeMillis() + ".jpg"));
+            //nameValuePairs.add(new BasicNameValuePair("base64", ba1));
+            //nameValuePairs.add(new BasicNameValuePair("ImageName", System.currentTimeMillis() + ".jpg"));
+
+            nameValuePairs.add(new BasicNameValuePair("timestamp", "123456"));
+            nameValuePairs.add(new BasicNameValuePair("img", ba1));
+
             try {
                 HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httppost = new HttpPost(URL);
+                HttpPost httppost = new HttpPost("http://130.211.184.58:8001/api/capture");
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpclient.execute(httppost);
                 String st = EntityUtils.toString(response.getEntity());
                 Log.v("log_tag", "In the try Loop" + st);
+                Log.i("DrDoc_Debug_Messages", "Upload completed successfully!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
             } catch (Exception e) {
                 Log.v("log_tag", "Error in http connection " + e.toString());
