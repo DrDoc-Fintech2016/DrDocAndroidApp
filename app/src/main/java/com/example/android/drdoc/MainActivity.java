@@ -66,15 +66,18 @@ public class MainActivity extends Activity {
         });
 
         btnup = (Button) findViewById(R.id.up);
+        btnup.setVisibility(View.GONE);
         btnup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 upload();
+                switchActivity();
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
     private void upload() {
@@ -88,8 +91,6 @@ public class MainActivity extends Activity {
         photo.compress(Bitmap.CompressFormat.JPEG, 90, bao);
         byte[] ba = bao.toByteArray();
         ba1 = Base64.encodeToString(ba, Base64.NO_WRAP);
-
-        Log.i("base64", "-----" + ba1);
 
         // Upload image to server
         new uploadToServer().execute();
@@ -114,6 +115,9 @@ public class MainActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100 && resultCode == RESULT_OK) {
+
+            btnup.setVisibility(View.VISIBLE);
+            btpic.setText("Rescan");
 
             selectedImage = data.getData();
             photo = (Bitmap) data.getExtras().get("data");
@@ -172,13 +176,18 @@ public class MainActivity extends Activity {
         client.disconnect();
     }
 
-    public void switchActivity(View view) {
+    public void switchActivityTemp(View view) {
+        switchActivity();
+    }
+
+    public void switchActivity() {
         Intent intent = new Intent(this, ChatActivity.class);
         //EditText editText = (EditText) findViewById(R.id.edit_message);
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
+
     public class uploadToServer extends AsyncTask<Void, Void, String> {
 
         private ProgressDialog pd = new ProgressDialog(MainActivity.this);
@@ -193,8 +202,6 @@ public class MainActivity extends Activity {
         protected String doInBackground(Void... params) {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            //nameValuePairs.add(new BasicNameValuePair("base64", ba1));
-            //nameValuePairs.add(new BasicNameValuePair("ImageName", System.currentTimeMillis() + ".jpg"));
 
             nameValuePairs.add(new BasicNameValuePair("timestamp", System.currentTimeMillis() + ""));
             nameValuePairs.add(new BasicNameValuePair("img", ba1));

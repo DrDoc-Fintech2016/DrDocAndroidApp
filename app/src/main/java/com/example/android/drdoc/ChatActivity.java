@@ -72,6 +72,8 @@ public class ChatActivity extends Activity {
         });
 
         connectWebSocket();
+
+        sendChatMessage(false, "Hello there! I'm Doctor Doc. I received your pay slip and I am analyzing it. Feel free to ask questions.");
     }
 
     private void connectWebSocket() {

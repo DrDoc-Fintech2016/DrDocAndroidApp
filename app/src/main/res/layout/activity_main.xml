@@ -3,26 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyActivity">
+    tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/Imageprev"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:scaleType="centerCrop"/>
 
     <Button
         android:id="@+id/cpic"
         android:text="Scan pay slip"
         android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/Imageprev" />
 
     <Button
         android:id="@+id/up"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Analyze"
         android:layout_below="@+id/cpic"
@@ -32,11 +33,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="chat"
-        android:onClick="switchActivity"
-        android:layout_below="@+id/cpic"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:onClick="switchActivityTemp"
         android:layout_marginLeft="17dp"
-        android:layout_marginStart="17dp" />
+        android:layout_marginStart="17dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
