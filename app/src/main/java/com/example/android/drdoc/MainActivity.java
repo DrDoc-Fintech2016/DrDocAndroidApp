@@ -208,7 +208,7 @@ public class MainActivity extends Activity {
 
             try {
                 HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httppost = new HttpPost("http://130.211.184.58:8001/api/capture");
+                HttpPost httppost = new HttpPost("http://130.211.184.58:8003/api/capture");
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpclient.execute(httppost);
                 String st = EntityUtils.toString(response.getEntity());
