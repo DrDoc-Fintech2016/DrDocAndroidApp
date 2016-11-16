@@ -9,7 +9,12 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
+import android.util.Log;
+import org.json.JSONObject;
+import org.json.JSONException;
+import de.tavendo.autobahn.WebSocketConnection;
+import de.tavendo.autobahn.WebSocketException;
+import de.tavendo.autobahn.WebSocketHandler;
 
 public class ChatActivity extends Activity {
     private static final String TAG = "ChatActivity";
@@ -19,6 +24,9 @@ public class ChatActivity extends Activity {
     private EditText chatText;
     private Button buttonSend;
     private boolean side = false;
+
+    private WebSocketConnection mWebSocketClient;
+    private boolean mWebSocketIsOpen = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +45,7 @@ public class ChatActivity extends Activity {
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    return sendChatMessage();
+                    return sendChatMessage(true, chatText.getText().toString());
                 }
                 return false;
             }
@@ -45,7 +53,7 @@ public class ChatActivity extends Activity {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                sendChatMessage();
+                sendChatMessage(true, chatText.getText().toString());
             }
         });
 
@@ -60,10 +68,61 @@ public class ChatActivity extends Activity {
                 listView.setSelection(chatArrayAdapter.getCount() - 1);
             }
         });
+
+        connectWebSocket();
     }
 
-    private boolean sendChatMessage() {
-        chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
+    private void connectWebSocket() {
+
+        //mConnectTrySkip = 3;
+        mWebSocketClient = new WebSocketConnection();
+        try {
+            mWebSocketClient.connect("ws://130.211.184.58:8002", new WebSocketHandler() {
+                @Override
+                public void onOpen() {
+                    Log.d("WEBSOCKETS", "Connected to server!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    mWebSocketIsOpen = true;
+                }
+
+                @Override
+                public void onTextMessage(String payload) {
+                    Log.i("WEBSOCKETS", payload);
+
+                    try {
+                        JSONObject reader = new JSONObject(payload);
+                        String cmd  = reader.getString("cmd");
+                        String data = reader.getString("data");
+
+                        Log.i("WEBSOCKETS", data);
+                        /*if (cmd.equalsIgnoreCase("camera")) {
+                            if (data.equalsIgnoreCase("capture")) {
+                                Log.i("WEBSOCKETS", "wow");
+                            }
+                        }*/
+
+                    } catch (JSONException e) {
+
+                    }
+                }
+
+                @Override
+                public void onClose(int code, String reason) {
+                    // Debug
+                    Log.d("WEBSOCKETS", "Connection lost.");
+                }
+            });
+        } catch(WebSocketException wse) {
+            Log.d("WEBSOCKETS", wse.getMessage());
+        }
+
+
+        // for some reason this work in debug mode only
+        //mWebSocketClient.connect();
+
+    }
+
+    private boolean sendChatMessage(boolean userTalks, String text) {
+        chatArrayAdapter.add(new ChatMessage(userTalks, text));
         chatText.setText("");
         side = !side;
         return true;
