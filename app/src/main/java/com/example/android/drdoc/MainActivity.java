@@ -1,22 +1,5 @@
 package com.example.android.drdoc;
 
-/*
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-}
-*/
-
-
-//package com.clickanduploadpic;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
