@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("DrDoc_Debug_Messages", "My first message!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Log.i("DrDoc_Debug_Messages", "My first message");
         setContentView(R.layout.activity_main);
 
         btpic = (Button) findViewById(R.id.cpic);
@@ -189,6 +189,13 @@ public class MainActivity extends Activity {
         client.disconnect();
     }
 
+    public void switchActivity(View view) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.edit_message);
+        //String message = editText.getText().toString();
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
     public class uploadToServer extends AsyncTask<Void, Void, String> {
 
         private ProgressDialog pd = new ProgressDialog(MainActivity.this);
@@ -206,7 +213,7 @@ public class MainActivity extends Activity {
             //nameValuePairs.add(new BasicNameValuePair("base64", ba1));
             //nameValuePairs.add(new BasicNameValuePair("ImageName", System.currentTimeMillis() + ".jpg"));
 
-            nameValuePairs.add(new BasicNameValuePair("timestamp", "123456"));
+            nameValuePairs.add(new BasicNameValuePair("timestamp", System.currentTimeMillis() + ""));
             nameValuePairs.add(new BasicNameValuePair("img", ba1));
 
             try {
@@ -216,7 +223,6 @@ public class MainActivity extends Activity {
                 HttpResponse response = httpclient.execute(httppost);
                 String st = EntityUtils.toString(response.getEntity());
                 Log.v("log_tag", "In the try Loop" + st);
-                Log.i("DrDoc_Debug_Messages", "Upload completed successfully!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
             } catch (Exception e) {
                 Log.v("log_tag", "Error in http connection " + e.toString());
