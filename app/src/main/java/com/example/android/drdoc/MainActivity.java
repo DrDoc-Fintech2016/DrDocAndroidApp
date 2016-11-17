@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
     }
 
     private void clickpic() {
-        tts.speak("Hello World", TextToSpeech.QUEUE_FLUSH, null);
+        //tts.speak("Hello World", TextToSpeech.QUEUE_FLUSH, null);
         // Check Camera
         if (getApplicationContext().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
