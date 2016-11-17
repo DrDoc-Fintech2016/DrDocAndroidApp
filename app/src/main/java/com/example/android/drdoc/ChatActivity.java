@@ -3,6 +3,7 @@ package com.example.android.drdoc;
 import android.app.Activity;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -12,6 +13,9 @@ import android.widget.ListView;
 import android.util.Log;
 import org.json.JSONObject;
 import org.json.JSONException;
+
+import java.util.Locale;
+
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
@@ -24,6 +28,7 @@ public class ChatActivity extends Activity {
     private EditText chatText;
     private Button buttonSend;
     private boolean side = false;
+    TextToSpeech tts;
 
     private WebSocketConnection mWebSocketClient;
     private boolean mWebSocketIsOpen = false;
@@ -72,8 +77,18 @@ public class ChatActivity extends Activity {
         });
 
         connectWebSocket();
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.UK);
+                }
+            }
+        });
 
         sendChatMessage(false, "Hello there! I'm Doctor Doc. I received your pay slip and I am analyzing it. Feel free to ask questions.");
+        //tts.speak("Hello World", TextToSpeech.QUEUE_FLUSH, null);
+
     }
 
     private void connectWebSocket() {

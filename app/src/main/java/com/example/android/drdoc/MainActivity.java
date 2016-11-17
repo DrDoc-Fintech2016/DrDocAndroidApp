@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.speech.tts.TextToSpeech;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -34,6 +35,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class MainActivity extends Activity {
@@ -44,6 +46,8 @@ public class MainActivity extends Activity {
     Uri selectedImage;
     Bitmap photo;
     String ba1;
+    TextToSpeech tts;
+
     public static String URL = "Paste your URL here";
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -78,6 +82,22 @@ public class MainActivity extends Activity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.UK);
+                }
+            }
+        });
+    }
+
+    public void onPause(){
+        if(tts !=null){
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onPause();
     }
 
     private void upload() {
@@ -85,10 +105,11 @@ public class MainActivity extends Activity {
         Log.i("path", "----------------" + picturePath);
 
         // Image
-        //Bitmap bm = BitmapFactory.decodeFile(picturePath);
+        picturePath = "/mnt/sdcard/pay_slip_images/rsz_paystub.png";
+        Bitmap bm = BitmapFactory.decodeFile(picturePath);
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        //bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-        photo.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+        bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+        //photo.compress(Bitmap.CompressFormat.JPEG, 90, bao);
         byte[] ba = bao.toByteArray();
         ba1 = Base64.encodeToString(ba, Base64.NO_WRAP);
 
@@ -107,6 +128,7 @@ public class MainActivity extends Activity {
 
             // start the image capture Intent
             startActivityForResult(intent, 100);
+
 
         } else {
             Toast.makeText(getApplication(), "Camera not supported", Toast.LENGTH_LONG).show();
